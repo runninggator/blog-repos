@@ -1,0 +1,28 @@
+services:
+  webserver:
+    build: .
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: on-failure
+    environment:
+      - DATABASE_HOST=database
+      - DATABASE_URL=mysql://root:fake-pwd@database:3306/mydb
+
+  database:
+    build:
+      dockerfile: MySQL.Dockerfile
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=fake-pwd
+      - MYSQL_DATABASE=mydb
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pfake-pwd"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
