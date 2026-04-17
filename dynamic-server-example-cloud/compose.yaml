@@ -1,9 +1,8 @@
 services:
-  webserver:
-    build: .
+  backend-server:
+    build: backend/
     ports:
       - "3000:3000"
-      - "3001:3001"
     depends_on:
       database:
         condition: service_healthy
@@ -11,6 +10,15 @@ services:
     environment:
       - DATABASE_HOST=database
       - DATABASE_URL=mysql://root:fake-pwd@database:3306/mydb
+
+  frontend-server:
+    build: frontend/
+    ports:
+      - "3001:3001"
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: on-failure
 
   database:
     build:

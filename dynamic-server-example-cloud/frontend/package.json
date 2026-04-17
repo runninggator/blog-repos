@@ -2,9 +2,9 @@
   "name": "dynamic-server-example",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "built/app.js",
   "scripts": {
-    "build": "npx vite build"
+    "build": "rm -rf built && npx vite build && tsc --outDir built && cp *.pem built"
   },
   "keywords": [],
   "author": "",

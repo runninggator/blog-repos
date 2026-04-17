@@ -1,9 +1,10 @@
 import express from "express";
+import https from "https";
+import fs from "fs";
 import * as jose from "jose";
 import { prismaClient } from "./prismaClient.js";
 import crypto from "crypto";
 
-const serverlessExpress = require("@codegenie/serverless-express");
 const dynamicApp = express();
 
 dynamicApp.all("/{*splat}", (req, res, next) => {
@@ -77,4 +78,13 @@ dynamicApp.post("/testJwt", async (req, res) => {
   res.json({ jwt });
 });
 
-export const handler = serverlessExpress({ app: dynamicApp })
+const options = {
+  key: fs.readFileSync("./www.jimmy-localhost.com-key.pem"),
+  cert: fs.readFileSync("./www.jimmy-localhost.com.pem"),
+};
+
+https.createServer(options, dynamicApp).listen(3000, () => {
+  console.log(
+    "Dynamic server is running on https://www.jimmy-localhost.com:3000",
+  );
+});

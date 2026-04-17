@@ -2,10 +2,9 @@
   "name": "dynamic-server-example",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "built/app.js",
   "scripts": {
-    "build": "node esbuild.docker.mjs",
-    "build:docker": "rm -rf built && docker buildx build --platform linux/amd64 --provenance=false -o built -f build-lambda.Dockerfile --no-cache ."
+    "build": "rm -rf built && tsc --outDir built && cp *.pem built"
   },
   "keywords": [],
   "author": "",
@@ -13,13 +12,10 @@
   "type": "module",
   "devDependencies": {
     "@types/express": "^5.0.6",
-    "esbuild": "^0.27.7",
-    "esbuild-node-externals": "^1.22.0",
-    "typescript": "^5.9.3",
-    "prisma": "^7.6.0"
+    "prisma": "^7.6.0",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@codegenie/serverless-express": "^4.17.1",
     "@prisma/adapter-mariadb": "^7.6.0",
     "@prisma/client": "^7.6.0",
     "express": "^5.2.1",

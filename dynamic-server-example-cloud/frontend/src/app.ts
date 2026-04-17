@@ -1,14 +1,14 @@
 import express from "express";
-import https from "https";
-import fs from "fs";
+import * as https from "node:https";
+import { readFileSync } from "node:fs";
 
 const staticApp = express();
 
 staticApp.use(express.static("public"));
 
 const options = {
-  key: fs.readFileSync("./www.jimmy-localhost.com-key.pem"),
-  cert: fs.readFileSync("./www.jimmy-localhost.com.pem"),
+  key: readFileSync("./www.jimmy-localhost.com-key.pem"),
+  cert: readFileSync("./www.jimmy-localhost.com.pem"),
 };
 
 https.createServer(options, staticApp).listen(3001, () => {
