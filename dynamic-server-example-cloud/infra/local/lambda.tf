@@ -20,8 +20,8 @@ resource "aws_iam_role" "example" {
 # Package the Lambda function code
 data "archive_file" "example" {
   type        = "zip"
-  output_path = "${path.module}/../../built/function.zip"
-  source_dir  = "${path.module}/../../built"
+  output_path = "${path.module}/../../backend/built/function.zip"
+  source_dir  = "${path.module}/../../backend/built/"
   excludes    = ["function.zip", "function"] 
 }
 
@@ -51,7 +51,6 @@ resource "aws_lambda_function" "example" {
       LOG_LEVEL            = "info"
       AWS_HOST             = "localhost.localstack.cloud"
       AWS_PORT             = "4566"
-      AWS_PROTOCOL         = "http"
       JWS_SECRET           = aws_ssm_parameter.secret.value
     }
   }
