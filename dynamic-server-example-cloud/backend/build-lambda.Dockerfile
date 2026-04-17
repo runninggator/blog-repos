@@ -6,7 +6,7 @@ RUN npm install
 RUN npm run build
 ENV NODE_ENV="production"
 RUN rm -rf node_modules
-RUN npm install --production
+RUN npm ci --production --omit=dev
 # Remove AWS SDK v3 to use the one provided by Lambda runtime
 RUN rm -rf node_modules/@aws-sdk
 RUN mv node_modules built/node_modules

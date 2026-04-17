@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.6.0",
   "engineVersion": "75cbdc1eb7150937890ad5465d861175c6624711",
   "activeProvider": "mysql",
-  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"generated/prisma\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n}\n\nmodel User {\n  id        Int     @id @default(autoincrement())\n  email     String  @unique\n  name      String?\n  hashedPwd String\n}\n",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client\"\n  output        = \"generated/prisma\"\n  binaryTargets = [\"rhel-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"mysql\"\n}\n\nmodel User {\n  id        Int     @id @default(autoincrement())\n  email     String  @unique\n  name      String?\n  hashedPwd String\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
