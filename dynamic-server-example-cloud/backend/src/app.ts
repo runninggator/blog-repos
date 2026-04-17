@@ -4,11 +4,7 @@ import { prismaClient } from "./prismaClient.js";
 import crypto from "crypto";
 
 const serverlessExpress = require("@codegenie/serverless-express");
-
-const staticApp = express();
 const dynamicApp = express();
-
-staticApp.use(express.static("public"));
 
 dynamicApp.all("/{*splat}", (req, res, next) => {
   res.setHeader(
@@ -81,5 +77,4 @@ dynamicApp.post("/testJwt", async (req, res) => {
   res.json({ jwt });
 });
 
-exports.dynamicApp = serverlessExpress({ app: dynamicApp })
-exports.staticApp = serverlessExpress({ app: staticApp })
+export const handler = serverlessExpress({ app: dynamicApp })

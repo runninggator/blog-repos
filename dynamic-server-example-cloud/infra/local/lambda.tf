@@ -34,7 +34,7 @@ resource "aws_lambda_function" "example" {
   filename         = data.archive_file.example.output_path
   function_name    = "example_lambda_function"
   role             = aws_iam_role.example.arn
-  handler          = "lambda.handler"
+  handler          = "dynamicApp.handler"
   source_code_hash = data.archive_file.example.output_base64sha256
   memory_size = 512
 

@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc --outDir built && npx vite build && cp -r node_modules built/node_modules",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "node esbuild.docker.mjs",
+    "build:docker": "rm -rf built && docker buildx build --platform linux/amd64 --provenance=false -o built -f build-lambda.Dockerfile ."
   },
   "keywords": [],
   "author": "",
@@ -13,9 +13,9 @@
   "type": "module",
   "devDependencies": {
     "@types/express": "^5.0.6",
-    "@vitejs/plugin-vue": "^6.0.5",
-    "typescript": "^5.9.3",
-    "vite": "^8.0.3"
+    "esbuild": "^0.27.7",
+    "esbuild-node-externals": "^1.22.0",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@codegenie/serverless-express": "^4.17.1",
@@ -23,7 +23,6 @@
     "@prisma/client": "^7.6.0",
     "express": "^5.2.1",
     "jose": "^6.2.2",
-    "prisma": "^7.6.0",
-    "vue": "^3.5.31"
+    "prisma": "^7.6.0"
   }
 }

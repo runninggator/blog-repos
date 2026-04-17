@@ -111,7 +111,3 @@ locals {
 output "local_base_url" {
   value = local.local_base_url
 }
-
-output "VITE_TRPC_URL" {
-  value = local.local_base_url
-}
