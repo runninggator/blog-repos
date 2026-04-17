@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 
 const staticApp = express();
 
-staticApp.use(express.static("public"));
+staticApp.use(express.static("built/public"));
 
 const options = {
   key: readFileSync("./www.jimmy-localhost.com-key.pem"),
