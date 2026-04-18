@@ -1,36 +1,22 @@
 services:
-  backend-server:
-    build: backend/
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME:-localstack-main}"
+    image: localstack/localstack-pro  # required for Pro
     ports:
-      - "3000:3000"
-    depends_on:
-      database:
-        condition: service_healthy
-    restart: on-failure
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+      - "127.0.0.1:443:443"              # LocalStack HTTPS Gateway (Pro)
     environment:
-      - DATABASE_HOST=database
-      - DATABASE_URL=mysql://root:fake-pwd@database:3306/mydb
+      # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
+      - DEBUG=${DEBUG:-0}
+      - PERSISTENCE=${PERSISTENCE:-0}
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
 
   frontend-server:
     build: frontend/
     ports:
       - "3001:3001"
-    depends_on:
-      database:
-        condition: service_healthy
     restart: on-failure
-
-  database:
-    build:
-      dockerfile: MySQL.Dockerfile
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=fake-pwd
-      - MYSQL_DATABASE=mydb
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pfake-pwd"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-      start_period: 10s

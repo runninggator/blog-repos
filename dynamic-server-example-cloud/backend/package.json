@@ -4,20 +4,27 @@
   "description": "",
   "main": "built/app.js",
   "scripts": {
-    "build": "rm -rf built && tsc --outDir built && cp *.pem built"
+    "build": "rm -rf built && tsc --outDir built",
+    "build:lambda": "rm -rf built && docker buildx build --platform linux/amd64 --provenance=false -o built -f Build-Lambda.Dockerfile .",
+    "deploy:lambda": "cd ../infra/local && tflocal init && tflocal apply --auto-approve && tflocal output > ../../frontend/.env",
+    "rebuild-frontend": "cd .. && docker compose up -d --build frontend-server",
+    "build-deploy:lambda": "npm run build:lambda && npm run deploy:lambda && npm run rebuild-frontend"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.868.0",
+    "@aws-sdk/lib-dynamodb": "^3.868.0",
     "@types/express": "^5.0.6",
-    "prisma": "^7.6.0",
+    "esbuild": "^0.25.7",
+    "esbuild-node-externals": "^1.20.1",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@prisma/adapter-mariadb": "^7.6.0",
-    "@prisma/client": "^7.6.0",
+    "@codegenie/serverless-express": "^4.17.1",
+    "dynamodb-toolbox": "^2.8.0",
     "express": "^5.2.1",
     "jose": "^6.2.2"
   }

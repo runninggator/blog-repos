@@ -9,8 +9,12 @@ const password = ref('')
 
 console.log('This is a Vue file!')
 
+if (!import.meta.env.VITE_LAMBDA_URL) {
+  console.error('VITE_LAMBDA_URL is not set')
+}
+
 function sendRequest() {
-  fetch('https://www.jimmy-localhost.com:3000/exampleEndpoint', {
+  fetch(`${import.meta.env.VITE_LAMBDA_URL}exampleEndpoint`, {
     method: 'GET',
     credentials: 'include',
     headers: {
@@ -24,7 +28,7 @@ function sendRequest() {
 }
 
 function testJwt() {
-  fetch('https://www.jimmy-localhost.com:3000/testJwt', {
+  fetch(`${import.meta.env.VITE_LAMBDA_URL}testJwt`, {
     method: 'POST',
     credentials: 'include',
     headers: {
@@ -39,12 +43,12 @@ function testJwt() {
 }
 
 async function login() {
-  jwt.value = await fetch('https://www.jimmy-localhost.com:3000/login', {
+  jwt.value = await fetch(`${import.meta.env.VITE_LAMBDA_URL}login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ username: username.value, password: password.value }),
+    body: JSON.stringify({ email: email.value, password: password.value }),
   })
     .then(response => response.json())
     .then(data => {
@@ -54,7 +58,7 @@ async function login() {
 }
 
 async function createUser() {
-  await fetch('https://www.jimmy-localhost.com:3000/createUser', {
+  await fetch(`${import.meta.env.VITE_LAMBDA_URL}createUser`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -73,7 +77,7 @@ async function createUser() {
   <p>This is a bare bones HTML template.</p>
   <button @click="sendRequest()">Click to send request</button>
   <form v-if="!createUserToggle" @submit.prevent="login()">
-    <input type="text" placeholder="username" v-model="username" />
+    <input type="text" placeholder="email" v-model="email" />
     <input type="text" placeholder="password" v-model="password" />
     <button type="submit">Login</button>
   </form>

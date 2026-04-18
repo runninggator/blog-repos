@@ -1,8 +1,7 @@
 import express from "express";
-import https from "https";
-import fs from "fs";
 import * as jose from "jose";
-import { prismaClient } from "./prismaClient.js";
+import { UserEntity } from "./dynamoDB/user.js";
+import { GetItemCommand, PutItemCommand } from 'dynamodb-toolbox'
 import crypto from "crypto";
 
 const dynamicApp = express();
@@ -10,15 +9,15 @@ const dynamicApp = express();
 dynamicApp.all("/{*splat}", (req, res, next) => {
   res.setHeader(
     "Access-Control-Allow-Origin",
-    "https://www.jimmy-localhost.com:3001",
+    "http://www.jimmy-localhost.com:3001",
   );
   res.setHeader("Access-Control-Allow-Credentials", "true");
   next();
 });
 
 dynamicApp.options("/{*splat}", (req, res) => {
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST");
-  res.setHeader("Access-Control-Allow-Headers", "foo, Content-Type");
+  res.setHeader("Access-Control-Allow-Methods", "*");
+  res.setHeader("Access-Control-Allow-Headers", "*");
   res.sendStatus(204);
 });
 
@@ -31,22 +30,26 @@ dynamicApp.get("/exampleEndpoint", (req, res) => {
   res.send("Hello from the example endpoint!");
 });
 
-const secret = Buffer.from("webserver_secret_key");
+const secret = Buffer.from(process.env.JWS_SECRET!);
 
 dynamicApp.use(express.json());
 
 dynamicApp.post("/login", async (req, res) => {
-  const user = await prismaClient.user.findFirst({
-    where: {
-      name: req.body.username,
-      hashedPwd: crypto
-        .createHash("sha256")
-        .update(req.body.password)
-        .digest("hex"),
-    },
-  });
+  const user = await UserEntity.build(GetItemCommand).key({ email: req.body.email })
+    .options({
+      attributes: [
+        'hashedPwd',
+      ],
+    })
+    .send()
+    .then(({ Item }) => Item);
 
-  if (!user) {
+  const hashedPwd = crypto
+    .createHash("sha256")
+    .update(req.body.password)
+    .digest("hex");
+
+  if (!user || user.hashedPwd !== hashedPwd) {
     return res.status(401).json({ error: "Invalid username or password" });
   }
 
@@ -58,16 +61,22 @@ dynamicApp.post("/login", async (req, res) => {
 });
 
 dynamicApp.post("/createUser", async (req, res) => {
-  const user = await prismaClient.user.create({
-    data: {
-      name: req.body.username,
-      email: req.body.email,
-      hashedPwd: crypto
-        .createHash("sha256")
-        .update(req.body.password)
-        .digest("hex"),
-    },
-  });
+  const user = UserEntity.build(PutItemCommand).item({
+    name: req.body.username,
+    email: req.body.email,
+    hashedPwd: crypto
+      .createHash("sha256")
+      .update(req.body.password)
+      .digest("hex"),
+  })
+    .options({
+      condition: {
+        attr: 'email',
+        exists: false,
+      },
+    })
+    .send()
+    .then(({ ToolboxItem: user }) => user);
 
   res.json({ user });
 });
@@ -78,13 +87,4 @@ dynamicApp.post("/testJwt", async (req, res) => {
   res.json({ jwt });
 });
 
-const options = {
-  key: fs.readFileSync("./www.jimmy-localhost.com-key.pem"),
-  cert: fs.readFileSync("./www.jimmy-localhost.com.pem"),
-};
-
-https.createServer(options, dynamicApp).listen(3000, () => {
-  console.log(
-    "Dynamic server is running on https://www.jimmy-localhost.com:3000",
-  );
-});
+export { dynamicApp };

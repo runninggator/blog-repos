@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ESNext", "DOM"],
+    "noEmit": true
+  },
+  "include": ["src/**/*.vue", "src/frontend.ts", "src/vite-env.d.ts"]
+}
