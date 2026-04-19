@@ -39,10 +39,7 @@ resource "aws_lambda_function" "example" {
   environment {
     variables = {
       ENVIRONMENT          = "development"
-      LOG_LEVEL            = "info"
-      AWS_HOST             = "localhost.localstack.cloud"
       USER_TABLE_NAME      = aws_dynamodb_table.user_table.name
-      AWS_PORT             = "4566"
       JWS_SECRET           = aws_ssm_parameter.secret.value
     }
   }

@@ -52,7 +52,7 @@ resource "aws_api_gateway_integration_response" "proxy_options" {
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'http://www.jimmy-localhost.com:3001'"
     "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,PUT,DELETE,OPTIONS'"
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+    "method.response.header.Access-Control-Allow-Headers" = "'*'"
     "method.response.header.Access-Control-Allow-Credentials" = "'true'"
   }
   response_templates = {

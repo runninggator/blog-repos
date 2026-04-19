@@ -1,6 +1,6 @@
 {
   // Visit https://aka.ms/tsconfig to read more about this file
-  "include": ["src/app.ts", "src/lambda.ts"],
+  "include": ["src/lambda.ts"],
   "compilerOptions": {
     // File Layout
     // "rootDir": "./src",
